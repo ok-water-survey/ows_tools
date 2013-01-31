@@ -1,0 +1,72 @@
+<html>
+<head>
+#compiler-settings
+cheetahVarStartToken = @
+#end compiler-settings
+<title>Cybercommons task results</title>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://static.cybercommons.org/css/bootstrap/css/cybercommons.css" type="text/css" media="screen, print">
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/css/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/portal/cctasks.js"></script>
+<script type="text/javascript" src="/static/portal/task_request.js"></script>
+<style>
+    BODY{font-family:sans-serif; }
+    #vright{valign:top; align:right}    
+</style>
+<script>
+    $(document).ready(function(){
+        $('.ajax-spinner').hide();
+       // $('#result' ).html( '&nbsp;' ).load('../task/task_id/tombstone');
+    //$( "#typeparea" ).accordion();
+    });
+</script>
+</head>
+<body>
+    <div class="ui-widget-header ui-corner-all span10" style="padding:2px;indent:2px;">Available Data - @site ( @location )</div>
+    <!--for k in ad
+    <tr><td valign="top" align="right"><strong>k</strong></td><td><strong>ad[k]</strong></td></tr>
+    end for-->
+    <div class="accordion span10" id="accordion">
+        <div class="accordion-group">
+            #for @grp in @groups
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#_@grp['code']" style="color:#08C;"> @grp['name'] </a>
+              </div>
+              <div id="_@grp['code']" class="accordion-body collapse">
+                <table class="span9" border="1">
+                #for @ad in @available
+                    #if @grp['code'] == @ad['data_type_cd']
+                    <tr><td valign="top" align="left"><strong>@ad['parameter']['name']</strong></td><td class="span2">@ad['begin_date']</td><td class="span2">@ad['end_date']</td><td class="span1">@ad['count_nu']</td></tr>
+                        #if @ad['data_type_cd']=='ad'
+                            <tr ><td colspan="4">
+                            #for @u in @grp['years']:
+                                 <a style="color:blue;" href="@grp['webdata'][@u]" target="_blank">@u</a>
+                            #end for 
+                            </td></tr>
+                        #else
+                        <tr ><td colspan="4">
+                            <div>
+                                <a style="color:blue;" href="@grp['webdata']" target="_blank">USGS Data Access</a>
+                                <input type="button" name="@ad['site_no']" value="Download Data" class="button" onclick="set_param({'params':['@ad['site_no']']})">
+                            </div>
+                            <div id="containspinner" class="ajax-spinner" style="width:16px;height:16px">
+                                <div id="spinner" style=""><img src="/static/img/spinner.gif" id="img-spinnger" alt="Loading" /></div>
+                                <div id="status" class="label success" style="line-height:3em;"></div>
+                            </div>
+
+                        </td></tr>
+                        #end if
+                    #end if
+                #end for
+                </table>
+              </div>
+            #end for
+        </div>
+    </div>
+</body>
+</html>
