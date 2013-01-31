@@ -9,7 +9,7 @@ env.psql_host = 'fire.rccc.ou.edu'
 env.apache_config = '/etc/httpd/conf.d/%(sitename)s.conf' % env
 env.python = '/usr/bin/python2.6'
 
-def testing():
+def ows_test():
     """
     Work on staging environment
     """
@@ -19,7 +19,7 @@ def testing():
     env.log_path = '%(path)s/log' % env
     env.hosts = ['test.oklahomawatersurvey.org']
 
-def data():
+def ows_data():
     """
     Production data.oklahomawatersurvey.org environment
     """
