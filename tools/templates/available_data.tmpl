@@ -8,6 +8,7 @@ cheetahVarStartToken = @
 <link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen, print">
 <link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, print">
 <link rel=stylesheet href="http://static.cybercommons.org/css/bootstrap/css/cybercommons.css" type="text/css" media="screen, print">
+<script type="text/javascript" src="http://static.cybercommons.org/js/simpleCart.min.js"></script>
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.min.js"></script>
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery.cookie.js"></script>
@@ -19,18 +20,18 @@ cheetahVarStartToken = @
     #vright{valign:top; align:right}    
 </style>
 <script>
-    $(document).ready(function(){
-        $('.ajax-spinner').hide();
-       // $('#result' ).html( '&nbsp;' ).load('../task/task_id/tombstone');
-    //$( "#typeparea" ).accordion();
+   $(document).ready(function(){
+    simpleCart.bind( "beforeAdd" , function( item ){
+        // return false if the item is in the cart,
+        // so it won't be added again
+        simpleCart.load();
+        return !simpleCart.has(item);
+    });
     });
 </script>
 </head>
 <body>
     <div class="ui-widget-header ui-corner-all span10" style="padding:2px;indent:2px;">Available Data - @site ( @location )</div>
-    <!--for k in ad
-    <tr><td valign="top" align="right"><strong>k</strong></td><td><strong>ad[k]</strong></td></tr>
-    end for-->
     <div class="accordion span10" id="accordion">
         <div class="accordion-group">
             #for @grp in @groups
@@ -52,12 +53,13 @@ cheetahVarStartToken = @
                         <tr ><td colspan="4">
                             <div>
                                 <a style="color:blue;" href="@grp['webdata']" target="_blank">USGS Data Access</a>
-                                <input type="button" name="@ad['site_no']" value="Download Data" class="button" onclick="set_param({'params':['@ad['site_no']']})">
+                                <div class="simpleCart_shelfItem">
+                                    <span class="item_name">@ad['site_no'] @ad['parameter']['name']</span>
+                                    <span style="display:none;"class="item_query">crazy querystring</span>
+                                    <a class="item_add" href="javascript:;"> Add to Cart </a></p>
+                                </div>
                             </div>
-                            <div id="containspinner" class="ajax-spinner" style="width:16px;height:16px">
-                                <div id="spinner" style=""><img src="/static/img/spinner.gif" id="img-spinnger" alt="Loading" /></div>
-                                <div id="status" class="label success" style="line-height:3em;"></div>
-                            </div>
+                            
 
                         </td></tr>
                         #end if
