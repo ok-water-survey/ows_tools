@@ -1,0 +1,55 @@
+<html>
+<head>
+#compiler-settings
+cheetahVarStartToken = @
+#end compiler-settings
+<title>Cybercommons task results</title>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://static.cybercommons.org/css/bootstrap/css/cybercommons.css" type="text/css" media="screen, print">
+<script type="text/javascript" src="http://static.cybercommons.org/js/simpleCart.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/css/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.simplemodal.1.4.4.min.js"></script>
+<script type="text/javascript" src="/static/portal/cctasks.js"></script>
+<script type="text/javascript" src="/static/portal/task_request.js"></script>
+<style>
+    BODY{font-family:sans-serif; }
+    #vright{valign:top; align:right}    
+</style>
+<script>
+    var data_item;
+   $(document).ready(function(){
+        simpleCart.bind( "beforeAdd" , function( item ){
+            // return false if the item is in the cart,
+            // so it won't be added again
+            simpleCart.load();
+            return !simpleCart.has(item);
+        });
+    });
+</script>
+</head>
+<body>
+    <div class="ui-widget-header ui-corner-all span10" style="padding:2px;indent:2px;">Oklahoma Water Resource Board - @site ( @location )</div>
+        <table class="span10" border="1">
+            <tr><td valign="top" align="left">&nbsp;<strong>OWRB Site</strong></td><td class="span6">@available['name']</td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>OWRB Well ID</strong></td><td>@available['WELL_ID']</td></tr>
+            <tr><td valign="top" align="leftt">&nbsp;<strong>OWRB Use Class</strong></td><td>@available['USE_CLASS']</td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>County</strong></td><td>@available['COUNTY']</td></tr> 
+            <tr ><td colspan="2">
+                            <div>
+                                #set @adj = @available['WELL_ID'].lower()
+                                &nbsp;Data Source:&nbsp;<a href="http://www.owrb.ok.gov/wd/reporting/printreport.php?siteid=@adj" target="_blank"> OWRB Well Log Report </a>
+                                <div class="simpleCart_shelfItem"><br>
+                                    <span style="display:none;" class="item_name">OWRB Well Logs</span>
+                                    <span style="display:none;" class="item_parameter">County: @available['COUNTY']</span>
+                                    <span style="display:none;" class="item_query">{'source':'OWRB','webservice_type':'@available['COUNTY']','sites':'@available['COUNTY']','site_no':'@available['COUNTY']','parameterCd':'logs','startDT':'needtofix','endDT':'needtofix'}</span>
+                                    <br>&nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @available['COUNTY'] County</a>
+                                </div>
+                            </div></tr>
+        </table>
+</body>
+</html>

@@ -16,7 +16,7 @@ taskdesc = {
 
 */
 // Called by call task to poll queue status of task based on task_id
-var QUEUE_SUBMIT = 'http://test.oklahomawatersurvey.org/queue/'
+var QUEUE_SUBMIT = 'http://test.oklahomawatersurvey.org/queue/';
 
 function test_auth_tkt() {
     $("#auth_dialog").hide()
@@ -30,8 +30,6 @@ function test_auth_tkt() {
     }
 
 }
-
-
 
 function poll_status(task_id) {
     $.getJSON(QUEUE_SUBMIT + 'task/' + task_id + '?callback=?', function (data) {
@@ -48,6 +46,7 @@ function poll_status(task_id) {
 function calltask(taskdesc) {
     defaults = {
         "service_host": QUEUE_SUBMIT + 'run/',
+        "poll_target": 'http://test.oklahomawatersurvey.org/queue/task/',
         "status": '#status',
         "spinner": '#spinner',
         "pollinterval": 2000,
@@ -69,7 +68,7 @@ function calltask(taskdesc) {
         "onSuccess": function (data) {
             $(options.status).show();
             $(options.status).removeClass('label success warning important').addClass('label success');
-            $(options.status).html('<a href="' + data.tombstone[0].result + '">Download</a>');
+            $(options.status).html('<a href="' + option.poll_target + data.task_id +'?type=result' + '">Download</a>');
             $(options.spinner).hide();
         },
     }

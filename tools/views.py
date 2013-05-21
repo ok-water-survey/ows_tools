@@ -1,14 +1,16 @@
 import cherrypy
-import json, os,urllib2 #, math,commands 
+import json, os,urllib2,urllib #, math,commands 
 #import urllib
 #import pickle
 #from celery.result import AsyncResult
 #from celery.execute import send_task
 #from celery.task.control import inspect
+from json_handler import handler
 from pymongo import Connection
-from datetime import datetime
+#from datetime import datetime
 from Cheetah.Template import Template
 from sets import Set
+from datetime import datetime
 templatepath= os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
 
 def mimetype(type):
@@ -29,14 +31,57 @@ class Root(object):
     def index(self):
         return 'Create list of tools available - To do list!!'
     @cherrypy.expose
+    @mimetype('application/json')
+    def cropland(self, huc, callback=None, **kwargs):
+        lookup=[]
+        data=[]
+        for row in self.db.ows.cropdata_lookup.find():
+            lookup.append(row)
+        total_acre=0.0
+        for row in self.db.ows.cropdata.find({'HUC':int(huc)}).sort('cdl_acres',-1):
+            total_acre = float(row["cdl_acres"]) + total_acre
+            data.append(row)
+        for row in data:
+            row['percent_watershed']=float(row["cdl_acres"])/total_acre *100
+            for lu in lookup:
+                if lu['cdl_code'] == row['cdl_class']:
+                    row['crop'] = lu['crop']
+                    break
+
+        serialized = json.dumps(data,default = handler,sort_keys=True, indent=4)
+        if callback is not None:
+            return str(callback) + '(' + serialized + ')'
+        else:
+            return serialized
+    @cherrypy.expose
     @mimetype('text/html')
-    def usgs_metadata(self,site,type=None, **kwargs):
+    def usgs_metadata(self,site,source=None,type=None, **kwargs):
         ''' Return Data Available for individual USGS SItes.
             site -  string site number
             type - optional - default html page, json for json data feed.
         ''' 
         if type == 'json':
             return json.dumps(self.get_metadata_site(site),sort_keys=True,indent=4)
+        elif source =='OWRBMW':
+            now = datetime.now()
+            month = now.strftime("%m")
+            year = now.strftime("%Y")
+            day = now.strftime("%d")
+            row = self.db.ows.owrb_monitor_sites.find_one({'WELL_ID':site})
+            nameSpace = dict(groups=[],available=row,site=row['name'],location=row['LATITUDE'] + ', ' +  row['LONGITUDE'],day=day,year=year,month=month)
+            t = Template(file = templatepath + '/available_data_owrbmw.tmpl', searchList=[nameSpace])
+            return t.respond()
+        elif source == 'MESONET':
+            row = self.db.ows.mesonet_site.find_one({'stid':site})
+            output=[]
+            nameSpace = dict(groups=[],available=row,site=row['name'],location=row['nlat'] + ', ' +  row['elon'])
+            t = Template(file = templatepath + '/available_data_meso.tmpl', searchList=[nameSpace])
+            return t.respond()
+        elif source =='OWRB':
+            row = self.db.ows.owrb_well_logs.find_one({'WELL_ID':site})
+            nameSpace = dict(groups=[],available=row,site=row['name'],location= (str(row['LATITUDE']) + ', ' + str(row['LONGITUDE'])))
+            t = Template(file = templatepath + '/available_data_owrb.tmpl', searchList=[nameSpace])
+            return t.respond()
         else:
             output=self.get_metadata_site(site)
             if len(output)==0:
@@ -88,8 +133,12 @@ class Root(object):
             wservice.remove('qw')
         if 'id' in wservice:
             url='http://ida.water.usgs.gov/ida/available_records.cfm?sn=%s' % (data[0]['site_no'])
-            out.append({'code':'id','name':'Instantaneous-Data Archive','webdata':url})
+            #out.append({'code':'id','name':'Instantaneous-Data Archive','webdata':url})
             wservice.remove('id')
+        if 'aw' in wservice:
+            url='http://groundwaterwatch.usgs.gov/AWLSites.asp?S=%s' % (data[0]['site_no'])
+            out.append({'code':'aw','name':'USGS Active Groundwater Level Network','webdata':url})
+            wservice.remove('aw')
         if 'ad' in wservice:
             for row in data:
                 if row['data_type_cd'] == 'ad':
@@ -97,12 +146,14 @@ class Root(object):
                     ct=int(row['count_nu'])
                     break
             temp={}
+            temp_encode={}
             yrs=[]
             for year in range(bd,bd+ct):
                 url='http://wdr.water.usgs.gov/wy%d/pdfs/%s.%d.pdf' % (year,data[0]['site_no'],year)
-                temp[year]=url
+                temp[year]=url #
+                temp_encode[year]=urllib.quote(url,'')
                 yrs.append(year)
-            out.append({'code':'ad','name':'Annual Water-Data Report (pdf)','webdata':temp,'years':yrs})
+            out.append({'code':'ad','name':'Annual Water-Data Report (pdf)','webdata':temp,'webdata_encode':temp_encode,'years':yrs})
             wservice.remove('ad')
         for remain in wservice:
             out.append({'code':remain,'name':remain,'webdata':durl})

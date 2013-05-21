@@ -13,6 +13,7 @@ cheetahVarStartToken = @
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
 <script type="text/javascript" src="http://static.cybercommons.org/js/jquery.cookie.js"></script>
 <script type="text/javascript" src="http://static.cybercommons.org/css/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.simplemodal.1.4.4.min.js"></script>
 <script type="text/javascript" src="/static/portal/cctasks.js"></script>
 <script type="text/javascript" src="/static/portal/task_request.js"></script>
 <style>
@@ -21,13 +22,27 @@ cheetahVarStartToken = @
 </style>
 <script>
    $(document).ready(function(){
-    simpleCart.bind( "beforeAdd" , function( item ){
-        // return false if the item is in the cart,
-        // so it won't be added again
-        simpleCart.load();
-        return !simpleCart.has(item);
+        simpleCart.bind( "beforeAdd" , function( item ){
+            // return false if the item is in the cart,
+            // so it won't be added again
+            simpleCart.load();
+            return !simpleCart.has(item);
+        });
     });
-    });
+    function popup_water(url){
+        $.modal('<img style="-webkit-user-select: none" src="' + url + '" height="420" width="598" style="border:0">', {
+            closeHTML:"",
+            containerCss:{
+                backgroundColor:"#fff",
+                borderColor:"#fff",
+                height:422,
+                padding:0,
+                width:600
+            },
+            overlayClose:true
+        });
+
+    }
 </script>
 </head>
 <body>
@@ -42,21 +57,56 @@ cheetahVarStartToken = @
                 <table class="span9" border="1">
                 #for @ad in @available
                     #if @grp['code'] == @ad['data_type_cd']
-                    <tr><td valign="top" align="left"><strong>@ad['parameter']['name']</strong></td><td class="span2">@ad['begin_date']</td><td class="span2">@ad['end_date']</td><td class="span1">@ad['count_nu']</td></tr>
+                        #if @ad['data_type_cd']=='qw' and @ad['parameter']['name']==''
+                            <tr><td valign="top" align="left"><strong>Download all @grp['name']</strong></td>
+                            <td class="span2">@ad['begin_date']</td><td class="span2">@ad['end_date']</td>
+                            <td class="span1"></td></tr>
+                        #else
+                            #if @ad['parameter']['name']==''
+                            <tr><td valign="top" align="left"><strong>Download all @grp['name']</strong></td>
+                            <td class="span2">@ad['begin_date']</td><td class="span2">@ad['end_date']</td>
+                            <td class="span1">@ad['count_nu']</td></tr>
+                            #else
+                            <tr><td valign="top" align="left"><strong>@ad['parameter']['name']</strong></td>
+                            <td class="span2">@ad['begin_date']</td><td class="span2">@ad['end_date']</td>
+                            <td class="span1">@ad['count_nu']</td></tr>
+                            #end if
+                        #end if
                         #if @ad['data_type_cd']=='ad'
-                            <tr ><td colspan="4">
+                            <tr ><td colspan="4">Data Reports:
                             #for @u in @grp['years']:
                                  <a style="color:blue;" href="@grp['webdata'][@u]" target="_blank">@u</a>
-                            #end for 
+                            #end for
+                            <div class="simpleCart_shelfItem">
+                                <span style="display:none;" class="item_name">@site (@ad['site_no'])</span>
+                                <span style="display:none;" class="item_parameter">@ad['parameter']['name']</span>
+                                <span style="display:none;" class="item_query">{'source':'USGS','webservice_type':'@ad['data_type_cd']','sites':'@ad['site_no']','parameterCd':'@ad['parm_cd']','startDT':'@ad['begin_date']','endDT':'@ad['end_date']','special':@grp['webdata_encode']}</span>
+                               <br>&nbsp;Data Cart: <a class="item_add" href="javascript:;">Add</a>
+                            </div> 
                             </td></tr>
                         #else
                         <tr ><td colspan="4">
                             <div>
-                                <a style="color:blue;" href="@grp['webdata']" target="_blank">USGS Data Access</a>
+                                &nbsp;Data Source: <a href="@grp['webdata']" target="_blank">USGS</a>&nbsp;&nbsp;
+                                #if @ad['data_type_cd']=='iv' or @ad['data_type_cd']=='uv' or @ad['data_type_cd']=='rt'
+                                &nbsp;&nbsp;&nbsp;&nbsp;Graph:<a onclick="popup_water('http://waterdata.usgs.gov/nwisweb/graph?site_no=@ad['site_no']&parm_cd=@ad['parm_cd']&period=7')" 
+                                        href="javascript:void(0);"> Preview </a>
+                                #end if
                                 <div class="simpleCart_shelfItem">
-                                    <span class="item_name">@ad['site_no'] @ad['parameter']['name']</span>
-                                    <span style="display:none;"class="item_query">crazy querystring</span>
-                                    <a class="item_add" href="javascript:;"> Add to Cart </a></p>
+                                    <span style="display:none;" class="item_name">@site (@ad['site_no'])</span>
+                                    <span style="display:none;" class="item_parameter">@ad['parameter']['name']</span>
+                                    #if @ad['data_type_cd']=='pk'
+                                        <span style="display:none;" class="item_query">{'source':'USGS','webservice_type':'@ad['data_type_cd']','sites':'@ad['site_no']','site_no':'@ad['site_no']','parameterCd':'@ad['parm_cd']','startDT':'@ad['begin_date']','endDT':'@ad['end_date']'}</span>
+                                    #else if @ad['data_type_cd']=='sv'
+                                        <span style="display:none;" class="item_query">{'source':'USGS','webservice_type':'@ad['data_type_cd']','sites':'@ad['site_no']','site_no':'@ad['site_no']','parameterCd':'@ad['parm_cd']','startDT':'@ad['begin_date']','endDT':'@ad['end_date']','format':'rdb_expanded'}</span>
+                                    #else if @ad['data_type_cd']=='qw'
+                                        <span style="display:none;" class="item_query">{'source':'USGS','webservice_type':'@ad['data_type_cd']','sites':'@ad['site_no']','siteid':'USGS-@ad['site_no']','pCode':'@ad['parm_cd']','parameterCd':'@ad['parm_cd']','mimeType':'tab'}</span>
+                                    #else
+                                        <span style="display:none;" class="item_query">{'source':'USGS','webservice_type':'@ad['data_type_cd']','sites':'@ad['site_no']','parameterCd':'@ad['parm_cd']','startDT':'@ad['begin_date']','endDT':'@ad['end_date']'}</span>
+                                    #end if
+                                    #if @ad['data_type_cd']!='aw'
+                                    <br>&nbsp;Data Cart: <a class="item_add" href="javascript:;">Add</a>
+                                    #end if
                                 </div>
                             </div>
                             

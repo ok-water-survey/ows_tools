@@ -1,0 +1,129 @@
+<html>
+<head>
+#compiler-settings
+cheetahVarStartToken = @
+#end compiler-settings
+<title>Cybercommons task results</title>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://static.cybercommons.org/css/bootstrap/css/cybercommons.css" type="text/css" media="screen, print">
+<script type="text/javascript" src="http://static.cybercommons.org/js/simpleCart.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/css/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.simplemodal.1.4.4.min.js"></script>
+<script type="text/javascript" src="/static/portal/cctasks.js"></script>
+<script type="text/javascript" src="/static/portal/task_request.js"></script>
+<style>
+    BODY{font-family:sans-serif; }
+    #vright{valign:top; align:right}    
+</style>
+<script>
+    var data_item;
+   $(document).ready(function(){
+        simpleCart.bind( "beforeAdd" , function( item ){
+            if(item.get('name')==='OWRB/Mesonet Groundwater Monitoring Data'){
+                var query = {'source':'OWRBMW','webservice_type':'mesonet','sites':'@available['WELL_ID']',
+                            'site_no':'@available['WELL_ID']','parameterCd':'mesonet','startDT':$("#start_date").datepicker( "getDate" ),
+                            'endDT':$("#end_date").datepicker( "getDate" )}
+                item.set("query",JSON.stringify(query));
+                //alert("INNNNN");
+            }
+            // return false if the item is in the cart,
+            // so it won't be added again
+            simpleCart.load();
+            return !simpleCart.has(item);
+        });
+        var endDate = new Date();
+        var d= new Date(endDate.getTime());
+        d.setDate(d.getDate()-120);
+        var startDate = new Date(d);
+        $("#start_date").datepicker({ beforeShow:customRange,minDate: new Date(1997,0,1), maxDate: new Date()});//,  changeYear: true });
+        $("#end_date").datepicker({beforeShow:customRange, minDate: new Date(1997,4-1,1), maxDate: new Date()});//, changeYear: true } );
+        function customRange(input) {
+           var min = new Date(1997, 1 - 1, 1), //Set this to your absolute minimum date
+                dateMin = min,
+                dateMax = null,
+                dayRange = 120; // Set this to the range of days you want to restrict to
+
+            if (input.id === "start_date") {
+                if ($("#end_date").datepicker("getDate") != null) {
+                    dateMax = $("#end_date").datepicker("getDate");
+                    dateMin = $("#end_date").datepicker("getDate");
+                    dateMin.setDate(dateMin.getDate() - dayRange);
+                    if (dateMin < min) {
+                        dateMin = min;
+                    }
+                }
+                else {
+                    dateMax = new Date; //Set this to your absolute maximum date
+                }
+            }
+            else if (input.id === "end_date") {
+                dateMax = new Date; //Set this to your absolute maximum date
+                if ($("#start_date").datepicker("getDate") != null) {
+                    dateMin = $("#start_date").datepicker("getDate");
+                    var rangeMax = new Date(dateMin.getFullYear(), dateMin.getMonth(),dateMin.getDate() + dayRange);
+
+                    if(rangeMax < dateMax) {
+                        dateMax = rangeMax;
+                    }
+                }
+            }
+            return {
+                minDate: dateMin,
+                maxDate: dateMax
+            };
+        }
+        $("#start_date").datepicker('setDate', startDate);
+        $("#end_date").datepicker('setDate', endDate);
+    });
+</script>
+</head>
+<body>
+    <div class="ui-widget-header ui-corner-all span10" style="padding:2px;indent:2px;">Oklahoma Water Resource Board Groundwater Monitoring Sites</div>
+        <table class="span10" border="1">
+            <tr><td valign="top" align="left">&nbsp;<strong>OWRB Site</strong></td><td class="span6">@available['name']</td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>OWRB Well ID</strong></td><td>@available['WELL_ID']</td></tr>
+            <tr><td valign="top" align="leftt">&nbsp;<strong>OWRB Monitoring Project</strong></td><td>@available['PROJECT']</td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>Date Range</strong></td><td>@available['startDT'] to @available['endDT']</td></tr>
+            <tr ><td colspan="2">
+                            <div>
+                                #set @adj = @available['WELL_ID'].lower()
+                                &nbsp;Data Source:&nbsp;<a href="http://www.owrb.ok.gov/wd/search_test/water_levels.php?siteid=@adj" target="_blank"> OWRB Groundwater Monitoring Data </a>
+                                &nbsp;Well Log Report:&nbsp;<a href="http://www.owrb.ok.gov/wd/reporting/printreport.php?siteid=@adj" target="_blank"> OWRB Well Report </a>
+                                <div class="simpleCart_shelfItem"><br>
+                                    <span style="display:none;" class="item_name">OWRB Groundwater Monitoring Data</span>
+                                    <span style="display:none;" class="item_parameter">Site: @site</span>
+                                    <span style="display:none;" class="item_query">{'source':'OWRBMW','webservice_type':'OWRB','sites':'@available['WELL_ID']','site_no':'@available['WELL_ID']','parameterCd':'data','startDT':'@available['startDT']','endDT':'@available['endDT']'}</span>
+                                    &nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @site</a>
+                                </div></div></tr>
+                <tr ><td colspan="2">
+                                <div>
+                                #if @available['mesonet']==True
+                                &nbsp;Mesonet Monitoring Site&nbsp;&nbsp;<br>
+                                &nbsp;Data Source(30 days):&nbsp;<a href="http://www.mesonet.org/index.php/meteogram/data/owrb_text//stid/@available['mesonetID']/year/@year/month/@month/day/@day/timelen/30d/product/GH20/type/csv" target="_blank"> OWRB/Mesonet Groundwater Monitoring Data </a>
+                                &nbsp;Metadata:&nbsp;<a href="http://www.mesonet.org/files/OWRB_Groundwater_Data.pdf" target="_blank"> Metadata </a>
+
+                                <div class="simpleCart_shelfItem"><br>
+                                    <table class="span6" border="1" style="margin-left:5px;">
+                                    <tr><td valign="middle" align="left"><label class="span2" for="start_date">Start Date</label></td>
+                                        <td valign="middle"><input class="span2" type="text" id="start_date" class="datepick"></td>
+                                        <td valign="middle" align="left"><label class="span2" for="end_date">End Date</label></td>
+                                        <td valign="middle"><input class="span2" type="text" id="end_date" class="datepick"></td>
+                                    </tr>
+                                    </table><br>
+
+                                    <span style="display:none;" class="item_name">OWRB/Mesonet Groundwater Monitoring Data</span>
+                                    <span style="display:none;" class="item_parameter">Mesonet Site: @site</span>
+                                    <span style="display:none;" class="item_query">{'source':'OWRBMW','webservice_type':'mesonet','sites':'@available['WELL_ID']','site_no':'@available['WELL_ID']','parameterCd':'mesonet','startDT':'available['startDT']','endDT':'available['endDT']'}</span>
+                                    &nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add Mesonet data</a>
+                                    (LIMIT:120 days)
+                                #end if
+                                </div>
+                            </div></tr>
+        </table>
+</body>
+</html>

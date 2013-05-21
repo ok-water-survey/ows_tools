@@ -1,0 +1,111 @@
+<html>
+<head>
+#compiler-settings
+cheetahVarStartToken = @
+#end compiler-settings
+<title>Cybercommons task results</title>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://static.cybercommons.org/css/bootstrap/css/cybercommons.css" type="text/css" media="screen, print">
+<script type="text/javascript" src="http://static.cybercommons.org/js/simpleCart.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/css/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.simplemodal.1.4.4.min.js"></script>
+<script type="text/javascript" src="/static/portal/cctasks.js"></script>
+<script type="text/javascript" src="/static/portal/task_request.js"></script>
+<style>
+    BODY{font-family:sans-serif; }
+    #vright{valign:top; align:right}    
+</style>
+<script>
+    var data_item;
+   $(document).ready(function(){
+        simpleCart.bind( "beforeAdd" , function( item ){
+            var query = {'source':'MESONET','webservice_type':'@available['stid']','sites':'@available['stid']',
+                            'site_no':'@available['stid']','parameterCd':'weather','startDT':$("#start_date").datepicker( "getDate" ),
+                            'endDT':$("#end_date").datepicker( "getDate" )}
+            item.set("query",JSON.stringify(query));
+            //alert(item.get('query'));
+            // return false if the item is in the cart,
+            // so it won't be added again
+            simpleCart.load();
+            return !simpleCart.has(item);
+        });
+        var endDate = new Date();
+        var d= new Date(endDate.getTime());
+        d.setDate(d.getDate()-120);
+        var startDate = new Date(d);
+        $("#start_date").datepicker({ beforeShow:customRange,minDate: new Date(1997,0,1), maxDate: new Date()});//,  changeYear: true }); 
+        $("#end_date").datepicker({beforeShow:customRange, minDate: new Date(1997,4-1,1), maxDate: new Date()});//, changeYear: true } );
+        function customRange(input) { 
+           var min = new Date(1997, 1 - 1, 1), //Set this to your absolute minimum date
+                dateMin = min,
+                dateMax = null,
+                dayRange = 120; // Set this to the range of days you want to restrict to
+
+            if (input.id === "start_date") {
+                if ($("#end_date").datepicker("getDate") != null) {
+                    dateMax = $("#end_date").datepicker("getDate");
+                    dateMin = $("#end_date").datepicker("getDate");
+                    dateMin.setDate(dateMin.getDate() - dayRange);
+                    if (dateMin < min) {
+                        dateMin = min;
+                    }
+                }
+                else {
+                    dateMax = new Date; //Set this to your absolute maximum date
+                }                      
+            }
+            else if (input.id === "end_date") {
+                dateMax = new Date; //Set this to your absolute maximum date
+                if ($("#start_date").datepicker("getDate") != null) {
+                    dateMin = $("#start_date").datepicker("getDate");
+                    var rangeMax = new Date(dateMin.getFullYear(), dateMin.getMonth(),dateMin.getDate() + dayRange);
+
+                    if(rangeMax < dateMax) {
+                        dateMax = rangeMax; 
+                    }
+                }
+            }
+            return {
+                minDate: dateMin, 
+                maxDate: dateMax
+            };     
+        }
+        $("#start_date").datepicker('setDate', startDate);
+        $("#end_date").datepicker('setDate', endDate);
+    });
+</script>
+</head>
+<body>
+    <div class="ui-widget-header ui-corner-all span10" style="padding:2px;indent:2px;">Mesonet Site - @site ( @location )</div>
+        <table class="span10" border="1">
+            <tr><td valign="top" align="left">&nbsp;<strong>Mesonet Site</strong></td><td class="span6">@available['name']</td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>Mesonet ID</strong></td><td>@available['stid']</td></tr>
+            <tr><td valign="top" align="leftt">&nbsp;<strong>Oklahoma Climate Division</strong></td><td>@available['cdiv']</td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>County</strong></td><td>@available['cnty']</td></tr> 
+            <tr><td valign="top" align="left">&nbsp;<strong>Nearest Incorporated Town</strong></td><td>@available['city']</td></tr>
+            <tr ><td colspan="2">
+                            <div>
+                                #set @adj = @available['stid'].lower()
+                                &nbsp;Data Source:&nbsp;<a href="http://www.mesonet.org/index.php/weather/meteogram/@adj" target="_blank"> Oklahoma Mesonet </a>
+                                <div class="simpleCart_shelfItem"><br>
+                                    <table class="span6" border="1" style="margin-left:5px;">
+                                    <tr><td valign="middle" align="left"><label class="span2" for="start_date">Start Date</label></td>
+                                        <td valign="middle"><input class="span2" type="text" id="start_date" class="datepick"></td>
+                                        <td valign="middle" align="left"><label class="span2" for="end_date">End Date</label></td>
+                                        <td valign="middle"><input class="span2" type="text" id="end_date" class="datepick"></td>
+                                    </tr>
+                                    </table>
+                                    <span style="display:none;" class="item_name">@site (@available['stid'])</span>
+                                    <span style="display:none;" class="item_parameter">@available['name']</span>
+                                    <span style="display:none;" class="item_query">{'source':'MESONET','webservice_type':'@available['stid']','sites':'@available['stid']','site_no':'@available['stid']','parameterCd':'weather','startDT':'needtofix','endDT':'needtofix'}</span>
+                                    <br>&nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add</a>
+                                </div>
+                            </div></tr>
+        </table>
+</body>
+</html>
