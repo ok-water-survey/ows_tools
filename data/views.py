@@ -14,10 +14,15 @@ class Root(object):
         raise cherrypy.HTTPRedirect("/data/proxy/")
     @cherrypy.expose
     @mimetype('text/html')
-    def proxy(self,url=None):
+    def proxy(self,url=None,callback=None,**kwargs):
         if url:
             try:
-                return urllib2.urlopen(url).read()
+                res= json.loads(urllib2.urlopen(url).read())
+                serialized = json.dumps(res,indent=4)
+                if callback is not None:
+                    return str(callback) + '(' + serialized + ')'
+                else:
+                    return serialized
             except Exception as inst:
                 raise inst
         else:
