@@ -5,6 +5,7 @@ import urllib
 
 import cherrypy
 
+
 #import urllib
 #import pickle
 #from celery.result import AsyncResult
@@ -80,29 +81,30 @@ class Root(object):
         for itm in data:
             if itm['CharacteristicName'] not in metadata:
                 metadata[itm['CharacteristicName']] = {
-                'ResultMeasure/MeasureUnitCode': itm['ResultMeasure/MeasureUnitCode'],
-                'MinActivityStartDate': itm['ActivityStartDate'],
-                #'MinActivityStartTime':itm['ActivityStartTime/Time'],
-                'MaxActivityStartDate': itm['ActivityStartDate'],
-                #'MaxActivityStartTime':itm['ActivityStartTime/Time'],
-                'USGSPCode': itm['USGSPCode'],
-                'samplecount': 1}
+                    'ResultMeasure/MeasureUnitCode': itm['ResultMeasure/MeasureUnitCode'],
+                    'MinActivityStartDate': itm['ActivityStartDate'],
+                    #'MinActivityStartTime':itm['ActivityStartTime/Time'],
+                    'MaxActivityStartDate': itm['ActivityStartDate'],
+                    #'MaxActivityStartTime':itm['ActivityStartTime/Time'],
+                    'USGSPCode': itm['USGSPCode'],
+                    'samplecount': 1}
             else:
                 if metadata[itm['CharacteristicName']]['MinActivityStartDate'] > itm['ActivityStartDate']:
                     metadata[itm['CharacteristicName']]['MinActivityStartDate'] = itm['ActivityStartDate']
                 if metadata[itm['CharacteristicName']]['MaxActivityStartDate'] < itm['ActivityStartDate']:
                     metadata[itm['CharacteristicName']]['MaxActivityStartDate'] = itm['ActivityStartDate']
-                metadata[itm['CharacteristicName']]['samplecount'] = metadata[itm['CharacteristicName']]['samplecount'] + 1
+                metadata[itm['CharacteristicName']]['samplecount'] = metadata[itm['CharacteristicName']][
+                                                                         'samplecount'] + 1
         return metadata
 
 
     @cherrypy.expose
     @mimetype('text/html')
     def usgs_metadata(self, site, source=None, type=None, **kwargs):
-        ''' Return Data Available for individual USGS SItes.
+        """ Return Data Available for individual USGS SItes.
             site -  string site number
             type - optional - default html page, json for json data feed.
-        '''
+        """
         if type == 'json':
             return json.dumps(self.get_metadata_site(site), sort_keys=True, indent=4)
         elif source == 'OWRBMW':
@@ -112,6 +114,16 @@ class Root(object):
             day = now.strftime("%d")
             row = self.db.ows.owrb_monitor_sites.find_one({'WELL_ID': site})
             nameSpace = dict(groups=[], available=row, site=row['name'],
+                             location=row['LATITUDE'] + ', ' + row['LONGITUDE'], day=day, year=year, month=month)
+            t = Template(file=templatepath + '/available_data_owrbmw.tmpl', searchList=[nameSpace])
+            return t.respond()
+        elif source == 'OWRBMWW':
+            now = datetime.now()
+            month = now.strftime("%m")
+            year = now.strftime("%Y")
+            day = now.strftime("%d")
+            row = self.db.ows.owrb_water_sites.find_one({'WELL_ID': site})
+            nameSpace = dict(groups=[], available=row, site="OWRB Monitor Well Site: %d" % row['WELL_ID'],
                              location=row['LATITUDE'] + ', ' + row['LONGITUDE'], day=day, year=year, month=month)
             t = Template(file=templatepath + '/available_data_owrbmw.tmpl', searchList=[nameSpace])
             return t.respond()
@@ -143,7 +155,6 @@ class Root(object):
                                  location=output[0]['dec_lat_va'] + ', ' + output[0]['dec_long_va'])
             t = Template(file=templatepath + '/available_data.tmpl', searchList=[nameSpace])
             return t.respond()
-
 
 
     def set_groups(self, data):
@@ -207,7 +218,7 @@ class Root(object):
             yrs = []
             for year in range(bd, bd + ct):
                 url = 'http://wdr.water.usgs.gov/wy%d/pdfs/%s.%d.pdf' % (year, data[0]['site_no'], year)
-                temp[year] = url #
+                temp[year] = url  #
                 temp_encode[year] = urllib.quote(url, '')
                 yrs.append(year)
             out.append(
