@@ -88,7 +88,7 @@ cheetahVarStartToken = @
             <tr><td valign="top" align="left">&nbsp;<strong>OWRB Site</strong></td><td class="span6">Groundwater well (@available['WELL_ID'])</td></tr>
             <tr><td valign="top" align="left">&nbsp;<strong>OWRB Well ID</strong></td><td>@available['WELL_ID']</td></tr>
             <tr><td valign="top" align="leftt">&nbsp;<strong>OWRB Monitoring Well Type</strong></td><td>@available['USE_CLASS']</td></tr>
-            <!--<tr><td valign="top" align="left">&nbsp;<strong>Date Range</strong></td><td>Z available['startDT'] to Z available['endDT']</td>-->
+            <!--<tr><td valign="top" align="left">&nbsp;<strong>Date Range</strong></td><td>@available['startDT'] to @available['endDT']</td>-->
             </tr>
             <tr ><td colspan="2">
                             <div>
@@ -99,7 +99,7 @@ cheetahVarStartToken = @
                                 <div class="simpleCart_shelfItem"><br>
                                     <span style="display:none;" class="item_name">OWRB Groundwater Monitoring Data</span>
                                     <span style="display:none;" class="item_parameter">Site: @site</span>
-                                    <span style="display:none;" class="item_query">{'source':'OWRBMWWW','webservice_type':'OWRB','sites':'@available['WELL_ID']','site_no':'@available['WELL_ID']','parameterCd':'data','startDT':'@available['startDT']','endDT':'@available['endDT']'}</span>
+                                    <span style="display:none;" class="item_query">{'source':'OWRBMWW','webservice_type':'OWRB','sites':'@available['WELL_ID']','site_no':'@available['WELL_ID']','parameterCd':'data','startDT':'@available['startDT']','endDT':'@available['endDT']'}</span>
                                     &nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @site</a>
                                 </div></div></tr>
                 <tr ><td colspan="2">

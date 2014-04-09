@@ -37,6 +37,17 @@ def mimetype(type):
 class Root(object):
     def __init__(self, mongoHost='localhost', port=27017, database='ows',
                  ws_url='http://waterservices.usgs.gov/nwis/site/?format=rdb&sites=%s&seriesCatalogOutput=true'):
+        sources = urlopen("http://data.oklahomawatersurvey.org/catalog/db_find/ows-portal/data/%7B'spec':%7B'model':'Source'%7D,'fields':['hassubs','value','parent','sub'],'sort':[('order',1)]%7D/")
+        temp = {}
+        data = json.load(sources)
+        #print data
+        for src in data:
+            if src['sub']:
+                temp[src['value']] = src['parent']
+            else:
+                temp[src['value']] = src['value']
+        #print temp
+        self.source = temp
         self.db = Connection(mongoHost, port)
         self.database = database
         self.ws_url = ws_url
@@ -105,9 +116,10 @@ class Root(object):
             site -  string site number
             type - optional - default html page, json for json data feed.
         """
+        isource = self.source[source]
         if type == 'json':
             return json.dumps(self.get_metadata_site(site), sort_keys=True, indent=4)
-        elif source == 'OWRBMW':
+        elif isource == 'OWRBMW':
             now = datetime.now()
             month = now.strftime("%m")
             year = now.strftime("%Y")
@@ -117,29 +129,31 @@ class Root(object):
                              location=row['LATITUDE'] + ', ' + row['LONGITUDE'], day=day, year=year, month=month)
             t = Template(file=templatepath + '/available_data_owrbmw.tmpl', searchList=[nameSpace])
             return t.respond()
-        elif source == 'OWRBMWW':
+        elif isource == 'OWRBMWW':
             now = datetime.now()
             month = now.strftime("%m")
             year = now.strftime("%Y")
             day = now.strftime("%d")
-            row = self.db.ows.owrb_water_sites.find_one({'WELL_ID': site})
+            #print site
+            row = self.db.ows.owrb_water_sites.find_one({'WELL_ID': int(site)})
+            #print row
             nameSpace = dict(groups=[], available=row, site="OWRB Monitor Well Site: %d" % row['WELL_ID'],
-                             location=row['LATITUDE'] + ', ' + row['LONGITUDE'], day=day, year=year, month=month)
-            t = Template(file=templatepath + '/available_data_owrbmw.tmpl', searchList=[nameSpace])
+                             location=str(row['LATITUDE']) + ', ' + str(row['LONGITUDE']), day=day, year=year, month=month)
+            t = Template(file=templatepath + '/available_data_owrbmww.tmpl', searchList=[nameSpace])
             return t.respond()
-        elif source == 'MESONET':
+        elif isource == 'MESONET':
             row = self.db.ows.mesonet_site.find_one({'stid': site})
             output = []
             nameSpace = dict(groups=[], available=row, site=row['name'], location=row['nlat'] + ', ' + row['elon'])
             t = Template(file=templatepath + '/available_data_meso.tmpl', searchList=[nameSpace])
             return t.respond()
-        elif source == 'OWRB':
+        elif isource == 'OWRB_LOG':
             row = self.db.ows.owrb_well_logs.find_one({'WELL_ID': site})
             nameSpace = dict(groups=[], available=row, site=row['name'],
                              location=(str(row['LATITUDE']) + ', ' + str(row['LONGITUDE'])))
             t = Template(file=templatepath + '/available_data_owrb.tmpl', searchList=[nameSpace])
             return t.respond()
-        elif source == 'WQP':
+        elif isource == 'WQP':
             row = self.db.ows.water_quality_sites.find_one({'MonitoringLocationIdentifier': site})
             row['parameters'] = self.get_wqp_metadata(site)
             nameSpace = dict(groups=[], available=row, site=row['MonitoringLocationIdentifier'],

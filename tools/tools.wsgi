@@ -14,7 +14,7 @@ from cherrypy import wsgiserver
 from views import Root
 
     
-application = cherrypy.Application(Root(), script_name=None, config = None )
+application = cherrypy.Application(Root(mongoHost='worker.oklahomawatersurvey.org'), script_name=None, config = None )
 
 if __name__ == '__main__':
     wsgi_apps = [('/tools', application)]
