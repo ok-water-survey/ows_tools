@@ -36,7 +36,7 @@ cheetahVarStartToken = @
         });
         var endDate = new Date();
         var d= new Date(endDate.getTime());
-        d.setDate(d.getDate()-120);
+        d.setDate(d.getDate()-31);
         var startDate = new Date(d);
         $("#start_date").datepicker({ beforeShow:customRange,minDate: new Date(1997,0,1), maxDate: new Date()});//,  changeYear: true }); 
         $("#end_date").datepicker({beforeShow:customRange, minDate: new Date(1997,4-1,1), maxDate: new Date()});//, changeYear: true } );
@@ -44,7 +44,7 @@ cheetahVarStartToken = @
            var min = new Date(1997, 1 - 1, 1), //Set this to your absolute minimum date
                 dateMin = min,
                 dateMax = null,
-                dayRange = 120; // Set this to the range of days you want to restrict to
+                dayRange = 31; // Set this to the range of days you want to restrict to
 
             if (input.id === "start_date") {
                 if ($("#end_date").datepicker("getDate") != null) {
