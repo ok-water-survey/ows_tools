@@ -160,7 +160,13 @@ class Root(object):
                              location=str(row['LatitudeMeasure']) + ', ' + str(row['LongitudeMeasure']))
             t = Template(file=templatepath + '/available_data_wqp.tmpl', searchList=[nameSpace])
             return t.respond()
-        else:
+        elif isource == "OCC":
+	    row = self.db.ows.occ_sites.find_one({'key':site})
+	    nameSpace = dict(groups=[], available=row,site=row['key'],
+			     location=str(row['Lat']) + ', ' + str(row['Long']))
+	    t = Template(file=templatepath + '/available_data_occ.tmpl', searchlist=[nameSpace]) 
+	    return t.respond()
+	else:
             output = self.get_metadata_site(site)
             if len(output) == 0:
                 nameSpace = dict(groups=[], available=output, site='No Data Available', location='Site Number: ' + site)
