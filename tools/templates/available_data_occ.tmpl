@@ -44,35 +44,12 @@ cheetahVarStartToken = @
                                 <div class="simpleCart_shelfItem"><br>
                                     <span style="display:none;" class="item_name">OCC </span>
                                     <span style="display:none;" class="item_parameter">Site ID: @available['key']</span>
-                                    <span style="display:none;" class="item_query">{'source':'OCC','webservice_type':'@available['OrganizationIdentifier']','sites':'@available['OrganizationIdentifier']','site_no':'@available['MonitoringLocationIdentifier']','parameterCd':'','startDT':'needtofix','endDT':'needtofix'}</span>
+                                    <span style="display:none;" class="item_query">{'source':'OCC','webservice_type':'@available['key']','sites':'@available['key']','site_no':'@available['key']','parameterCd':'','startDT':'needtofix','endDT':'needtofix'}</span>
                                     
-				    <br>&nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @available['MonitoringLocationIdentifier']</a>
+				    <br>&nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @available['stationname']</a>
                                 </div>
                             </div>
-                </tr>
-		<tr>
-			<td valign="top" colspan="3" align="left">Sample Date: @available['sampledate']</td></tr>
-		<tr>	<td valign="top" colspan="3" align="left">ph Value: @available['ph']</td></tr>
-		<tr>	<td valign="top" colspan="3" align="left">Chloride: @available['cl_ppm']</td></tr>
-		<tr> 	<td valign="top" colspan="3" align="left">TDS: @available['tds']</td></tr>
-
-			
-           <!-- #for @pname, @pval in @available['parameters'].items()-->
-               <!-- <tr><td valign="top" align="left">&nbsp;<strong>@pname</strong></td><td>@pval['MinActivityStartDate'] to @pval['MinActivityStartDate']</td><td>@pval['samplecount']</td></tr>-->
-                <!--<tr ><td colspan="3">
-                            <div>
-                                #set @adj = @available['MonitoringLocationIdentifier']
-                                &nbsp;Data Source:&nbsp;<a href="http://www.waterqualitydata.us/Result/search?siteid=@adj&mimeType=csv" target="_blank"> WQP Web service</a>
-                                <div class="simpleCart_shelfItem"><br>
-                                    <span style="display:none;" class="item_name">WQP </span>
-                                    <span style="display:none;" class="item_parameter">Site ID: @available['MonitoringLocationIdentifier']</span>
-                                    <span style="display:none;" class="item_query">{'source':'WQP','webservice_type':'@available['OrganizationIdentifier']','sites':'@available['OrganizationIdentifier']','site_no':'@available['MonitoringLocationIdentifier']','parameterCd':'@pname','startDT':'needtofix','endDT':'needtofix'}</span>
-                                    <br>&nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @available['MonitoringLocationIdentifier']</a>
-                                </div>
-                            </div>
-                </tr>-->
-
-            <!-- #end for-->
+		</td></tr>
         </table>
 </body>
 </html>
