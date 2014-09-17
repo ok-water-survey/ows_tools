@@ -1,0 +1,78 @@
+<html>
+<head>
+#compiler-settings
+cheetahVarStartToken = @
+#end compiler-settings
+<title>Cybercommons task results</title>
+<link type="text/css" href="http://static.cybercommons.org/css/cybercomui/jquery-ui-1.8.13.custom.css" rel="Stylesheet"/>
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap-responsive.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://test.cybercommons.org/flora/bootstrap/css/bootstrap.min.css" type="text/css" media="screen, print">
+<link rel=stylesheet href="http://static.cybercommons.org/css/bootstrap/css/cybercommons.css" type="text/css" media="screen, print">
+<script type="text/javascript" src="http://static.cybercommons.org/js/simpleCart.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/css/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://static.cybercommons.org/js/jquery.simplemodal.1.4.4.min.js"></script>
+<script type="text/javascript" src="/static/portal/cctasks.js"></script>
+<script type="text/javascript" src="/static/portal/task_request.js"></script>
+<style>
+    BODY{font-family:sans-serif; }
+    #vright{valign:top; align:right}    
+</style>
+<script>
+    var data_item;
+   $(document).ready(function(){
+        simpleCart.bind( "beforeAdd" , function( item ){
+            // return false if the item is in the cart,
+            // so it won't be added again
+            simpleCart.load();
+            return !simpleCart.has(item);
+        });
+    });
+</script>
+</head>
+<body>
+    <div class="ui-widget-header ui-corner-all span10" style="padding:2px;indent:2px;">OCC DATA - @site ( @location )</div>
+        <table class="span10" border="1">
+            <tr><td valign="top" align="left">&nbsp;<strong>Site Name</strong></td><td colspan="2" class="span6">@available['stationname']</td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>Site ID</strong></td><td colspan="2">@available['key']</td></tr>
+            <tr><td valign="top" align="leftt">&nbsp;<strong>Organization</strong></td><td colspan="2">@available['organization']</td></tr>
+
+                <tr ><td colspan="3">
+                            <div>
+                                <div class="simpleCart_shelfItem"><br>
+                                    <span style="display:none;" class="item_name">OCC </span>
+                                    <span style="display:none;" class="item_parameter">Site ID: @available['key']</span>
+                                    <span style="display:none;" class="item_query">{'source':'OCC','webservice_type':'@available['OrganizationIdentifier']','sites':'@available['OrganizationIdentifier']','site_no':'@available['MonitoringLocationIdentifier']','parameterCd':'','startDT':'needtofix','endDT':'needtofix'}</span>
+                                    
+				    <br>&nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @available['MonitoringLocationIdentifier']</a>
+                                </div>
+                            </div>
+                </tr>
+		<tr>
+			<td valign="top" colspan="3" align="left">Sample Date: @available['sampledate']</td></tr>
+		<tr>	<td valign="top" colspan="3" align="left">ph Value: @available['ph']</td></tr>
+		<tr>	<td valign="top" colspan="3" align="left">Chloride: @available['cl_ppm']</td></tr>
+		<tr> 	<td valign="top" colspan="3" align="left">TDS: @available['tds']</td></tr>
+
+			
+           <!-- #for @pname, @pval in @available['parameters'].items()-->
+               <!-- <tr><td valign="top" align="left">&nbsp;<strong>@pname</strong></td><td>@pval['MinActivityStartDate'] to @pval['MinActivityStartDate']</td><td>@pval['samplecount']</td></tr>-->
+                <!--<tr ><td colspan="3">
+                            <div>
+                                #set @adj = @available['MonitoringLocationIdentifier']
+                                &nbsp;Data Source:&nbsp;<a href="http://www.waterqualitydata.us/Result/search?siteid=@adj&mimeType=csv" target="_blank"> WQP Web service</a>
+                                <div class="simpleCart_shelfItem"><br>
+                                    <span style="display:none;" class="item_name">WQP </span>
+                                    <span style="display:none;" class="item_parameter">Site ID: @available['MonitoringLocationIdentifier']</span>
+                                    <span style="display:none;" class="item_query">{'source':'WQP','webservice_type':'@available['OrganizationIdentifier']','sites':'@available['OrganizationIdentifier']','site_no':'@available['MonitoringLocationIdentifier']','parameterCd':'@pname','startDT':'needtofix','endDT':'needtofix'}</span>
+                                    <br>&nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @available['MonitoringLocationIdentifier']</a>
+                                </div>
+                            </div>
+                </tr>-->
+
+            <!-- #end for-->
+        </table>
+</body>
+</html>
