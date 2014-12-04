@@ -164,7 +164,7 @@ class Root(object):
 	    row = self.db.ows.occ_site.find_one({'Location_id':site})
 	    nameSpace = dict(groups=[], available=row,site=row['Location_id'],
 			     location=str(row['Lat']) + ', ' + str(row['Long']))
-	    t = Template(file=templatepath + '/available_data_occ.tmpl', searchlist=[nameSpace]) 
+	    t = Template(file=templatepath + '/available_data_occ.tmpl') 
 	    return t.respond()
 	else:
             output = self.get_metadata_site(site)
