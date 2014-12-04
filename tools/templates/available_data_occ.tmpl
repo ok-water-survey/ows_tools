@@ -35,16 +35,16 @@ cheetahVarStartToken = @
 <body>
     <div class="ui-widget-header ui-corner-all span10" style="padding:2px;indent:2px;">OCC DATA - @site ( @location )</div>
         <table class="span10" border="1">
-            <tr><td valign="top" align="left">&nbsp;<strong>Site Name</strong></td><td colspan="2" class="span6">@available['stationname']</td></tr>
-            <tr><td valign="top" align="left">&nbsp;<strong>Site ID</strong></td><td colspan="2">@available['key']</td></tr>
-            <tr><td valign="top" align="leftt">&nbsp;<strong>Organization</strong></td><td colspan="2">@available['organization']</td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>Site Name</strong></td><td colspan="2" class="span6">@available['Name_description']</td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>Site ID</strong></td><td colspan="2">@available['Location_id']</td></tr>
+            <tr><td valign="top" align="leftt">&nbsp;<strong>Organization</strong></td><td colspan="2">OCC</td></tr>
 
                 <tr ><td colspan="3">
                             <div>
                                 <div class="simpleCart_shelfItem"><br>
                                     <span style="display:none;" class="item_name">OCC </span>
-                                    <span style="display:none;" class="item_parameter">Site ID: @available['key']</span>
-                                    <span style="display:none;" class="item_query">{'source':'OCC','webservice_type':'@available['key']','sites':'@available['key']','site_no':'@available['key']','parameterCd':'','startDT':'needtofix','endDT':'needtofix'}</span>
+                                    <span style="display:none;" class="item_parameter">Site ID: @available['Location_id']</span>
+                                    <span style="display:none;" class="item_query">{'source':'OCC','webservice_type':'@available['Location_id']','sites':'@available['Location_id']','site_no':'@available['Location_id']','parameterCd':'','startDT':'needtofix','endDT':'needtofix'}</span>
                                     
 				    <br>&nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @available['stationname']</a>
                                 </div>
