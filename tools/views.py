@@ -108,7 +108,6 @@ class Root(object):
                                                                          'samplecount'] + 1
         return metadata
 
-
     @cherrypy.expose
     @mimetype('text/html')
     def usgs_metadata(self, site, source=None, type=None, **kwargs):
@@ -162,8 +161,12 @@ class Root(object):
             return t.respond()
         elif isource == "OCC":
 	    row = self.db.ows.occ_site.find_one({'Location_id':site})
-	    data = self.db.ows.occ_data.find({'Location_id':site})
-	    nameSpace = dict(groups=[], available=row, availdata=data,site=row['Location_id'],
+	    ocdata = self.db.ows.occ_data.find({'Location_id':site})
+	    data=[]
+   	    for value in ocdata:
+		x= '<tr><td>' + str(value['Test_Type'])+'</td><td>' + str(value['parameter']) + '</td></tr>'
+		data.append(x)	    
+	    nameSpace = dict(groups=[], available=row, availdata=data, site=row['Location_id'],
 			     location=str(row['Lat']) + ', ' + str(row['Long']))
 	    t = Template(file=templatepath + '/available_data_occ.tmpl', searchList=[nameSpace]) 
 	    return t.respond()
