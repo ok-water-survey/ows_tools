@@ -35,11 +35,10 @@ cheetahVarStartToken = @
 <body>
     <div class="ui-widget-header ui-corner-all span10" style="padding:2px;indent:2px;">OCC DATA - @site ( @location )</div>
         <table class="span10" border="1">
-            <tr><td valign="top" align="left">&nbsp;<strong>Site Name</strong></td><td colspan="2" class="span6"><!--@available['Location_id']--></td></tr>
-            <tr><td valign="top" align="left">&nbsp;<strong>Site ID</strong></td><td colspan="2">@available['Location_id']</td></tr>
-            <tr><td valign="top" align="leftt">&nbsp;<strong>Organization</strong></td><td colspan="2">OCC</td></tr>
-
-                <tr ><td colspan="3">
+            <tr><td valign="top" align="left">&nbsp;<strong>Site Name</strong></td><td colspan="3" class="span6"><!--@available['Location_id']--></td></tr>
+            <tr><td valign="top" align="left">&nbsp;<strong>Site ID</strong></td><td colspan="3">@available['Location_id']</td></tr>
+            <tr><td valign="top" align="leftt">&nbsp;<strong>Organization</strong></td><td colspan="3">OCC</td></tr>
+                <tr ><td colspan="4">
                             <div>
                                 <div class="simpleCart_shelfItem"><br>
                                     <span style="display:none;" class="item_name">OCC </span>
@@ -48,10 +47,10 @@ cheetahVarStartToken = @
                                     
 				    <br>&nbsp;Data Cart:&nbsp;<a class="item_add" href="javascript:;">Add @available['Location_id']</a>
                                 </div>
-                            </div>
+                            </div><br><br>
 		</td></tr>
-
-<tr><td>@availdata</td></tr>
+<tr><td><b>Test Type</b></td><td><b>Test Value</b></td><td><b>Limit</b></td><td><b>Sample Date</b></td></tr>
+@availdata
         </table>
 </body>
 </html>
