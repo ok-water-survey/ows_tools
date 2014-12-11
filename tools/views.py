@@ -162,7 +162,8 @@ class Root(object):
             return t.respond()
         elif isource == "OCC":
 	    row = self.db.ows.occ_site.find_one({'Location_id':site})
-	    nameSpace = dict(groups=[], available=row,site=row['Location_id'],
+	    data = self.db.ows.occ_data.find({'Location_id':site})
+	    nameSpace = dict(groups=[], available=row, availdata=data,site=row['Location_id'],
 			     location=str(row['Lat']) + ', ' + str(row['Long']))
 	    t = Template(file=templatepath + '/available_data_occ.tmpl', searchList=[nameSpace]) 
 	    return t.respond()
