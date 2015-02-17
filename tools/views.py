@@ -161,7 +161,7 @@ class Root(object):
             return t.respond()
         elif isource == "OCC":
 	    row = self.db.ows.occ_site.find_one({'Location_id':site})
-	    ocdata = self.db.ows.occ_data.find({'Location_id':site})
+	    ocdata = self.db.ows.occ_data.find({'Location_id':site}).sort('Sample_Date')
 	    
 	    data=[]
    	    for value in ocdata:
